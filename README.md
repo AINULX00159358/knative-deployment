@@ -144,7 +144,7 @@ kn broker list
 NAME                      URL                                                                                        AGE   CONDITIONS   READY   REASON
 invoicemgr-event-broker   http://broker-ingress.knative-eventing.svc.cluster.local/default/invoicemgr-event-broker   36h   6 OK / 6     True
 ```
-** To Test the Broker **
+**To Test the Broker**
 ```console
 curl -X POST http://broker-ingress.knative-eventing.svc.cluster.local/default/invoicemgr-event-broker \
 --header 'Content-Type: application/json' \
