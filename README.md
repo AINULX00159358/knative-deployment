@@ -4,6 +4,31 @@
 Kubernetes cluster :
 - with Node CPU of 4 core or More
 - with Node Available Memery of 8 GB or More
+### Install Knative CLI ###
+Download the corret Architecture and Version for the follow website https://github.com/knative/client/releases
+example for Ubuntu on Intel based machine : https://github.com/knative/client/releases/download/knative-v1.11.0/kn-linux-amd64
+
+- Download Knative Client Binary from https://github.com/knative/client/releases
+- rename kn-linux-amd64 to kn
+- Make it executable by  _chmod a+x kn_
+- Move _kn_ to _usr/local/bin_ folder
+- Run _kn version_ to verify
+
+```console
+$ kn version
+
+  Version:      v1.10.0
+Build Date:   2023-04-26 10:17:21
+Git Revision: 46dbf661
+Supported APIs:
+* Serving
+  - serving.knative.dev/v1 (knative-serving v1.10.0)
+* Eventing
+  - sources.knative.dev/v1 (knative-eventing v1.10.0)
+  - eventing.knative.dev/v1 (knative-eventing v1.10.0)
+```
+
+
 
 ---
 ## Install Knative Serving
