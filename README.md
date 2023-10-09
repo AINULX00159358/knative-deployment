@@ -144,5 +144,24 @@ kn broker list
 NAME                      URL                                                                                        AGE   CONDITIONS   READY   REASON
 invoicemgr-event-broker   http://broker-ingress.knative-eventing.svc.cluster.local/default/invoicemgr-event-broker   36h   6 OK / 6     True
 ```
+** To Test the Broker **
+```console
+curl -X POST http://broker-ingress.knative-eventing.svc.cluster.local/default/invoicemgr-event-broker \
+--header 'Content-Type: application/json' \
+--header 'Ce-Type: InvoiceGenRequest' \
+--header 'Ce-Id: 65577-88880-iuyyre' \
+--header 'Ce-Source: Postman' \
+--header 'Ce-Subject: Invoice.Gen.Req' \
+--header 'Ce-Specversion: 1.0' \
+--data ' {
+      "custID": "44458222",
+      "amount": 52255
+}'
+```
+If running in Minikube , make sure the service __broker_ingress__ is exponsed as NodePort or Loadbalancer , In that case use Minikube IP. 
+```
+minikube service broker_ingress -n knative-eventing --url
+```
+
 
 
