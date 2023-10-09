@@ -301,3 +301,6 @@ Not all Metrics are accumulated by Prometheus. As such saperate configmaps are a
 _servicemonitor.yaml_ file is available containing the Service Monitor configuration to scrape Knative services and pods for metrics
 
 - [servicemonitor YAML file](servicemonitor.yaml)
+```
+kubectl apply -f servicemonitor.yaml
+```
