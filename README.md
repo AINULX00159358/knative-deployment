@@ -187,6 +187,116 @@ If running in Minikube , make sure the service __broker_ingress__ is exponsed as
 ```
 minikube service broker_ingress -n knative-eventing --url
 ```
+---
+## Install Monitoring Tools, Prometheus and Grafana ##
 
+Prometheus and Grafana monitoring tools are deployed using Helm , Reference : https://knative.dev/docs/serving/observability/metrics/collecting-metrics/
 
+** Create knative-monitoring Namespace **
+```
+kubectl create ns knative-monitoring
+```
+** Update Helm Charts **
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack -n knative-monitoring -f - <<EOF
+kube-state-metrics:
+  metricLabelsAllowlist:
+    - pods=[*]
+    - deployments=[app.kubernetes.io/name,app.kubernetes.io/component,app.kubernetes.io/instance]
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+EOF
+```
+_Deployment Will take time to fully Spinup all PODs_
+
+```console
+$ kubectl get pod,svc -n knative-monitoring
+
+NAME                                                         READY   STATUS    RESTARTS   AGE
+pod/alertmanager-prometheus-kube-prometheus-alertmanager-0   2/2     Running   0          36h
+pod/prometheus-grafana-8b795f574-kzqlh                       3/3     Running   0          36h
+pod/prometheus-kube-prometheus-operator-675566bfdf-27cl2     1/1     Running   0          36h
+pod/prometheus-kube-state-metrics-678bc96599-t9g8f           1/1     Running   0          36h
+pod/prometheus-prometheus-kube-prometheus-prometheus-0       2/2     Running   0          36h
+pod/prometheus-prometheus-node-exporter-jdmqv                1/1     Running   0          36h
+pod/prometheus-prometheus-node-exporter-m2vzg                1/1     Running   0          36h
+
+NAME                                              TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+service/alertmanager-operated                     ClusterIP      None             <none>          9093/TCP,9094/TCP,9094/UDP   36h
+service/prometheus-grafana                        ClusterIP      10.100.118.28    <none>          80/TCP                       36h
+service/prometheus-grafana-lb                     LoadBalancer   10.103.142.31    10.103.142.31   8070:31859/TCP               36h
+service/prometheus-kube-prometheus-alertmanager   ClusterIP      10.110.98.220    <none>          9093/TCP,8080/TCP            36h
+service/prometheus-kube-prometheus-operator       ClusterIP      10.101.98.88     <none>          443/TCP                      36h
+service/prometheus-kube-prometheus-prometheus     ClusterIP      10.103.220.172   <none>          9090/TCP,8080/TCP            36h
+service/prometheus-kube-state-metrics             ClusterIP      10.111.163.168   <none>          8080/TCP                     36h
+service/prometheus-operated                       ClusterIP      None             <none>          9090/TCP                     36h
+service/prometheus-operated-lb                    LoadBalancer   10.97.34.23      10.97.34.23     9292:31702/TCP               36h
+service/prometheus-prometheus-node-exporter       ClusterIP      10.99.39.94      <none>          9100/TCP                     36h
+x001589358@x001589358-UM773:~/KNATIVE/deployment/monitoring$
+
+```
+**Update Prometheus service to loadbalancer**
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    operated-prometheus: "true"
+  name: prometheus-operated-lb
+  namespace: knative-monitoring
+spec:
+  ports:
+  - name: http-web
+    port: 9292
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app.kubernetes.io/name: prometheus
+  type: LoadBalancer
+EOF
+```
+
+**Upgrade Grafana Service to Loadbalancer**
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: knative-monitoring
+  labels:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 10.1.2
+    helm.sh/chart: grafana-6.59.5
+  name: prometheus-grafana-lb
+  namespace: knative-monitoring
+spec:
+  ports:
+  - name: http-web
+    port: 8070
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/name: grafana
+  type: LoadBalancer
+EOF
+```
+_Note: Default Password for Grafana is **admin/prom-operator**_
+
+If you are running in Minikue, makesure _**minikube tunnel**_ is running. Once LoadBalancer IP is allocated, you can open Grafana and Pormetheus webpage in Browser.
+- Use `minikube service prometheus-grafana-lb -n knative-monitoring` to open Grafana in Browser
+- Use `minikube service prometheus-operated-lb -n knative-monitoring` to open Grafana in Browser
+
+### Service Minotoring ###
+Not all Metrics are accumulated by Prometheus. As such saperate configmaps are available for scraping Knative Pods and Services
+_servicemonitor.yaml_ file is available containing the Service Monitor configuration to scrape Knative services and pods for metrics
 
