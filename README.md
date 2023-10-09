@@ -300,3 +300,4 @@ If you are running in Minikue, makesure _**minikube tunnel**_ is running. Once L
 Not all Metrics are accumulated by Prometheus. As such saperate configmaps are available for scraping Knative Pods and Services
 _servicemonitor.yaml_ file is available containing the Service Monitor configuration to scrape Knative services and pods for metrics
 
+- [servicemonitor YAML file](servicemonitor.yaml)
