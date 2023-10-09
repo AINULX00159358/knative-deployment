@@ -134,8 +134,15 @@ kubectl patch svc broker-ingress -n knative-eventing -p '{"spec": {"type": "Node
 #### (Optional) Create a Knative Event Broker 
 Knative Event Broker will also create create a default channel 
 ```
-
-
----
-
+kn broker create invoicemgr-event-broker
 ```
+_Creation process takes some time_
+```
+kn broker list
+```
+```console
+NAME                      URL                                                                                        AGE   CONDITIONS   READY   REASON
+invoicemgr-event-broker   http://broker-ingress.knative-eventing.svc.cluster.local/default/invoicemgr-event-broker   36h   6 OK / 6     True
+```
+
+
