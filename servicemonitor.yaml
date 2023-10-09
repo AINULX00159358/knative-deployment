@@ -1,0 +1,201 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: controller
+  name: controller
+  namespace: knative-serving
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-serving
+  selector:
+    matchLabels:
+      app: controller
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: autoscaler
+  name: autoscaler
+  namespace: knative-serving
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-serving
+  selector:
+    matchLabels:
+      app: autoscaler
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: autoscaler-hpa
+  name: autoscaler-hpa
+  namespace: knative-serving
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-serving
+  selector:
+    matchLabels:
+      app: autoscaler
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: activator
+  name: activator
+  namespace: knative-serving
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-serving
+  selector:
+    matchLabels:
+      app: activator
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: webhook
+  name: webhook
+  namespace: knative-serving
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-serving
+  selector:
+    matchLabels:
+      app: webhook
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: broker-filter
+  name: broker-filter
+  namespace: knative-eventing
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-eventing
+  selector:
+    matchLabels:
+      eventing.knative.dev/brokerRole: filter
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: broker-ingress
+  name: broker-ingress
+  namespace: knative-eventing
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-eventing
+  selector:
+    matchLabels:
+      eventing.knative.dev/brokerRole: ingress
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: imc-dispatcher
+  name: imc-dispatcher
+  namespace: knative-eventing
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-eventing
+  selector:
+    matchLabels:
+      messaging.knative.dev/role: dispatcher
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: inmemorychannel-webhook
+  name: inmemorychannel-webhook
+  namespace: knative-eventing
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - knative-eventing
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: imc-controller
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: knative-app-services
+  name: knative-app-services
+  namespace: default
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    port: http-usermetric
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      app.solution: invoicemgr
+      networking.internal.knative.dev/serviceType: Private
